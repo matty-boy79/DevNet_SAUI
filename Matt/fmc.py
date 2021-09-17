@@ -151,7 +151,6 @@ if __name__ == "__main__":
     print('\n' * 100 + 'Getting authentication token...')
     token = get_token()
     print(f"Token: {token}")
-    print("Git Hub Test")
 
     while True:
         print("")
