@@ -1,0 +1,2 @@
+[ftd1]
+192.168.111.12 ansible_network_os=ftd ansible_ssh_user=admin ansible_ssh_pass=Pass123

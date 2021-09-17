@@ -1,0 +1,40 @@
+---
+- name: "PLAYBOOK Delete Configured Manager"
+  hosts: localhost
+  connection: local
+  gather_facts: false
+  ignore_unreachable: true
+  ignore_errors: true
+  vars_files:
+    - variables.yml
+    - devices.yml
+  tasks:
+    - block:
+        - name: "Running: configure manager delete"
+          raw: configure manager delete
+          loop: "{{ ftd_devices }}"
+          delegate_to: "{{ item.FTDIPAddress }}"
+          register: action_delete
+          changed_when: false
+
+        - shell: "echo -e '####################################\nCONFIGURE MANAGER DELETE OUTPUT' > {{ deleted_output }}"
+          changed_when: false
+
+        - shell: "echo -e '####################################\n' >> {{ deleted_output }}"
+          changed_when: false
+
+        - name: send filtered FTD Devices to {{ deleted_output }}
+          shell: "echo -e '{{ item.stderr_lines[0] |replace('closed','finished') }}\t{{ item.stdout_lines[0] | default(omit) }} \n' >> {{ deleted_output }}"
+          loop: "{{ action_delete | json_query('results[*]') }}"
+          when:
+            - "'unreachable' not in item"
+          delegate_to: localhost
+
+        - name: Show {{ deleted_output }} file
+          debug:
+            msg: "{{ lookup('file','{{ deleted_output }}') }}"
+          tags: print_action
+
+      # explain
+      #when: operation == "delete"
+      run_once: true

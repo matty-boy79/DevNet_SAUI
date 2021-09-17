@@ -1,0 +1,15 @@
+---
+# OUTPUT FILES
+status_output: "/tmp/status_output.log"
+deleted_output: "/tmp/deleted_output.log"
+registered_output: "/tmp/registered_output.log"
+
+# Used by status_output
+banner_status: |
+        ####################################
+                  SHOW MANAGERS OUTPUT
+        ####################################
+
+        ####################################
+                  WITHOUT CONNECTION
+        ####################################

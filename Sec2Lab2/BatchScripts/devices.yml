@@ -1,0 +1,6 @@
+---
+# INPUT FILE.
+ftd_devices:
+  - FTDIPAddress: "192.168.111.12"
+    ManagerIPAddress: "192.168.111.20"
+    SecretKey: cisco123

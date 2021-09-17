@@ -1,0 +1,3 @@
+8.8.8.8,"dns,Inside Hosts",1
+192.168.133.30,"Inside Hosts,jumphost,End User Devices,Client IP Ranges (DHCP Range),By Function",1
+192.168.20.32,"Inside Hosts,Confidential Servers,Servers,By Function",0

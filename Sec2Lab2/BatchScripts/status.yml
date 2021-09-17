@@ -1,0 +1,44 @@
+---
+- name: "PLAYBOOK Info Configure Manager"
+  hosts: localhost
+  connection: local
+  gather_facts: false
+  ignore_unreachable: true
+  ignore_errors: true
+  vars_files:
+    - variables.yml
+    - devices.yml
+  tasks:
+    - block:
+        - name: "Get info running show managers"
+          raw: show managers
+          loop: "{{ ftd_devices }}"
+          delegate_to: "{{ item.FTDIPAddress }}"
+          register: output
+          changed_when: false
+
+        - name: Create header of {{ status_output }}
+          copy:
+            content: "{{ banner_status }}"
+            dest: "{{ status_output }}"
+
+        - shell: "echo -e '{{ item }}####################################\n' >> {{ status_output }}"
+          loop: "{{ output | json_query('results[*].msg') }}"
+          changed_when: false
+
+        - shell: "echo -e 'WITH CONNECTION\n####################################\n' >> {{ status_output }}"
+          changed_when: false
+
+        - name: send filtered FTD Devices to {{ status_output }}
+          shell: "echo -e '{{ item.stderr_lines |replace('closed','finished') }}\t{{ item.stdout_lines.0 | replace('Host','ManagerIPAddress')}} \n' >> {{ status_output }}"
+          loop: "{{ output | json_query('results[*]') }}"
+          when:
+            - "'unreachable' not in item"
+          delegate_to: localhost
+
+        - name: Show status_output file
+          debug:
+            msg: "{{ lookup('file','{{ status_output }}') }}"
+          tags: print_action
+
+      run_once: true

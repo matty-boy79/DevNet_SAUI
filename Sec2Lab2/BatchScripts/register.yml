@@ -1,0 +1,38 @@
+---
+- name: "PLAYBOOK Add Configure Manager"
+  hosts: localhost
+  connection: local
+  gather_facts: false
+  ignore_unreachable: true
+  ignore_errors: true
+  vars_files:
+    - variables.yml
+    - devices.yml
+  tasks:
+    - block:
+        - name: "Running: configure manager add"
+          raw: "configure manager add {{ item.ManagerIPAddress }} {{ item.SecretKey }}"
+          loop: "{{ ftd_devices }}"
+          delegate_to: "{{ item.FTDIPAddress }}"
+          register: action_add
+          changed_when: false
+          tags: print_action
+
+        - shell: "echo -e '####################################\nCONFIGURE MANAGER ADD OUTPUT' > {{ registered_output }}"
+          changed_when: false
+
+        - shell: "echo -e '####################################\n' >> {{ registered_output }}"
+          changed_when: false
+
+        - shell: "echo -e '{{ item.stderr_lines[0] |replace('closed','finished') }}\t{{ item.stdout_lines[0] | default(omit) }} \n' >> {{ registered_output }}"
+          loop: "{{ action_add | json_query('results[*]') }}"
+          when:
+            - "'unreachable' not in item"
+          delegate_to: localhost
+
+        - name: Show {{ registered_output }} file
+          debug:
+            msg: "{{ lookup('file','{{ registered_output }}') }}"
+          tags: print_action
+
+      run_once: true
