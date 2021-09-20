@@ -1,0 +1,14 @@
+- hosts: all
+  connection: httpapi
+  tasks:
+    - name: Create a new network object
+      ftd_configuration:
+        operation: upsertNetworkObject
+        data:
+          name: "{{ item.name }}"
+          subType: HOST
+          value: "{{ item.ip }}"
+          type: networkobject
+      loop:
+        - { name: matt1, ip: 1.1.1.1 }
+        - { name: matt2, ip: 2.2.2.2 }

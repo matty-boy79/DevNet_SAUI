@@ -1,0 +1,11 @@
+- hosts: all
+  connection: httpapi
+  tasks:
+    - name: Get all Network Objects
+      ftd_configuration:
+        operation: getNetworkObjectList
+        register_as: output
+
+    - name: Print Output
+      debug:
+        msg: "{{output}}"

@@ -1,0 +1,11 @@
+- hosts: all
+  connection: httpapi
+  tasks:
+    - name: Create a new network object
+      ftd_configuration:
+        operation: upsertNetworkObject
+        data:
+          name: matt_new_object
+          subType: HOST
+          value: 10.20.30.40
+          type: networkobject
