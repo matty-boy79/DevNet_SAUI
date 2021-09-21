@@ -1,5 +1,7 @@
+*_variables.py
 fmc_variables.py
 ftd_variables.py
+sw_variables.py
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
